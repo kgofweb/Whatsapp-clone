@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { Avatar, IconButton } from '@material-ui/core'
 import { 
   AttachFile, 
+  InsertEmoticon,
+  Mic,
   MoreVert, 
   SearchOutlined
 } from '@material-ui/icons'
@@ -13,15 +15,26 @@ import {
   ChatBody,
   ChatMessage,
   ChatName,
-  ChatTimesTamp
+  ChatTimesTamp,
+  ChatFooter
 } from "./ChatStyle.styled"
 
 const Chat = () => {
+  const [input, setInput] = useState('')
   const [seed, setSeed] = useState('')
 
   useEffect(() => {
     setSeed(Math.floor(Math.random() * 1000))
   }, [])
+
+  // Send message
+  const sendMessage = (e) => {
+    e.preventDefault();
+
+    console.log('Message sended', input);
+
+    setInput('');
+  }
   
   return (
     <ChatStyled>
@@ -66,9 +79,27 @@ const Chat = () => {
         </ChatMessage>
       </ChatBody>
 
-      <div className="chat-footer">
-
-      </div>
+      <ChatFooter>
+        <IconButton>
+          <InsertEmoticon />
+        </IconButton>
+        <form>
+          <input 
+            type="text" 
+            placeholder='Type a message...' 
+            value={input}
+            onChange={e => setInput(e.target.value)}
+          />
+          <button 
+            type='submit'
+            onClick={sendMessage}
+            >Send a message
+          </button>
+        </form>
+        <IconButton>
+          <Mic />
+        </IconButton>
+      </ChatFooter>
     </ChatStyled>
   )
 }

@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react"
 import { 
   SidebarStyled, 
   SidebarHeader,
@@ -13,7 +14,21 @@ import MoreVertIcon from '@material-ui/icons/MoreVert'
 import { SearchOutlined } from '@material-ui/icons'
 import SidebarChat from "../sidebarChat/SidebarChat"
 
+import db from '../firebase/firebase'
+
 const Sidebar = () => {
+  const [rooms, setRooms] = useState([])
+
+  useEffect(() => {
+    db.collection('rooms').onSnapshot(snapshot => (
+      setRooms(snapshot.docs.map(doc => ({
+        // Rooms object (id and data)
+        id: doc.id,
+        data: doc.data(),
+      })))
+    ))
+  }, [])
+
   return (
     <SidebarStyled>
       <SidebarHeader>
@@ -42,9 +57,14 @@ const Sidebar = () => {
 
       <SidebarChatStyled>
         <SidebarChat addNewChat />
-        <SidebarChat />
-        <SidebarChat />
-        <SidebarChat />
+        {rooms.map(room => (
+          <SidebarChat 
+            key={room.id} 
+            // Les passer en props dans SidebarChat
+            id={room.id}
+            name={room.data.name}
+          />
+        ))}
       </SidebarChatStyled>
     </SidebarStyled>
   )

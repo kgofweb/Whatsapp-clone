@@ -5,7 +5,7 @@ import {
   SidebarChatInfo 
 } from "./SidebarChat.styled"
 
-const SidebarChar = ({ addNewChat }) => {
+const SidebarChar = ({ id, name, addNewChat }) => {
   const [seed, setSeed] = useState('')
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const SidebarChar = ({ addNewChat }) => {
       {/* <Avatar src={`https://i.pravatar.cc/150?img=${seed}`} /> */}
       <Avatar src={`https://joeschmoe.io/api/v1/${seed}`} />
       <SidebarChatInfo>
-        <h2>User Name</h2>
+        <h2>{name}</h2>
         <p>Last message...</p>
       </SidebarChatInfo>
     </SidebarChatInnerStyled>

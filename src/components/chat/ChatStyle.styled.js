@@ -4,7 +4,6 @@ export const ChatStyled = styled.div`
   flex: .72;
   display: flex;
   flex-direction: column;
-
 `
 
 export const ChatHeader = styled.div`
@@ -77,4 +76,36 @@ export const ChatName = styled.span`
 export const ChatTimesTamp = styled.span`
   font-size: x-small;
   margin-left: 10px;
+`
+
+export const ChatFooter = styled.footer`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 62px;
+  padding: 0 10px;
+  border-top: 1px solid lightgray;
+
+  .MuiSvgIcon-root {
+    font-size: 22px;
+  }
+
+  & > form {
+    flex: 1;
+    display: flex;
+    margin: 0 10px;
+  }
+
+  & > form > input {
+    flex: 1;
+    border-radius: 30px;
+    outline: none;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+
+  & > form > button {
+    display: none;
+  }
 `
