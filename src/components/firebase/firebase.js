@@ -18,3 +18,5 @@ const provider = new firebase.auth.GoogleAuthProvider()
 
 export { auth, provider }
 export default db
+
+// NB: This method only work with firebase version 8 (8.4.1)

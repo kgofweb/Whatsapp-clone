@@ -41,3 +41,5 @@ width: fit-content // Prends la largeur automatique de l'element en question
 <ChatMessage className={`${true && 'chat__reciever'}`}> [true] vient de : message.name === user.displayName
 
 <p className={`chat__message ${true && 'chat__reciever'}`}></p>
+
+<ChatMessage key={key} className={`${true && 'chat__reciever'}`}>

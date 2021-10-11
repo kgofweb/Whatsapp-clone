@@ -21,6 +21,9 @@ export const SidebarChatInfo = styled.div`
   h2 {
     font-size: 1.1rem;
     margin-bottom: 3px;
-    
+  }
+
+  p {
+    color: gray;
   }
 `;

@@ -1,4 +1,6 @@
+import useAvatar from '../customHook/useAvatar'
 import { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import { Avatar, IconButton } from '@material-ui/core'
 import { 
   AttachFile, 
@@ -19,19 +21,49 @@ import {
   ChatFooter
 } from "./ChatStyle.styled"
 
-const Chat = () => {
-  const [input, setInput] = useState('')
-  const [seed, setSeed] = useState('')
+import db from '../firebase/firebase'
+import { useStateValue } from '../stateProvider/StateProvider'
 
+// Utilisation pour la timestamp
+import firebase from 'firebase'
+
+const Chat = () => {
+  const seed = useAvatar('')
+  // const [seed, setSeed] = useState('')
+  const [input, setInput] = useState('')
+  const [roomName, setRoomName] = useState('')
+  // Renvoie un objet de paires clé/valeur de paramètres d'URL.
+  const { roomId } = useParams()
+  // For messages
+  const [messages, setMessages] = useState([])
+  const [{ user }, dispatch] = useStateValue()
+
+  // Faire le lien avec la sidebar
   useEffect(() => {
-    setSeed(Math.floor(Math.random() * 1000))
-  }, [])
+    if(roomId) {
+      db.collection('rooms').doc(roomId).onSnapshot(snapshot => setRoomName(snapshot.data().name))
+
+      // Set message
+      db.collection('rooms').doc(roomId).collection('messages').orderBy('timestamp', 'asc').onSnapshot(snapshot => 
+        setMessages(snapshot.docs.map(doc => doc.data()))
+      )
+    }
+  }, [roomId])
+
+  // useEffect(() => {
+  //   setSeed(Math.floor(Math.random() * 1000))
+  // }, [roomId])
 
   // Send message
   const sendMessage = (e) => {
     e.preventDefault();
 
-    console.log('Message sended', input);
+    db.collection('rooms').doc(roomId).collection('messages').add({
+      message: input,
+      // displayName vient de google authentication
+      name: user.displayName,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    })
 
     setInput('');
   }
@@ -42,8 +74,13 @@ const Chat = () => {
         <Avatar src={`https://joeschmoe.io/api/v1/${seed}`} />
 
         <ChatHeaderInfo>
-          <h3>Room Name</h3>
-          <p>Last seen message ....</p>
+          <h3>{roomName}</h3>
+          <p>
+            Last seen{' '}
+            {new Date(
+              messages[messages.length - 1]?.timestamp?.toDate()
+            ).toUTCString()}
+          </p>
         </ChatHeaderInfo>
 
         <ChatHeaderRight>
@@ -62,21 +99,13 @@ const Chat = () => {
       </ChatHeader>
 
       <ChatBody>
-        <ChatMessage className={`${true && 'chat__reciever'}`}>
-          <ChatName>Mevy Dev</ChatName>
-            Hey guys, What's up ?
-          <ChatTimesTamp>3:25 pm</ChatTimesTamp>
-        </ChatMessage>
-        <ChatMessage className={`${false && 'chat__reciever'}`}>
-          <ChatName>Jonh Doe</ChatName>
-            Hey gorgeous freind of Internet
-          <ChatTimesTamp>3:25 pm</ChatTimesTamp>
-        </ChatMessage>
-        <ChatMessage className={`${false && 'chat__reciever'}`}>
-          <ChatName>Jonh Doe</ChatName>
-            I hope everything is cool 
-          <ChatTimesTamp>3:25 pm</ChatTimesTamp>
-        </ChatMessage>
+        {messages.map((message, key) => (
+          <ChatMessage key={key} className={`${ message.name === user.displayName && 'chat__reciever'}`}>
+            <ChatName>{message.name}</ChatName>
+              {message.message}
+            <ChatTimesTamp>{new Date(message.timestamp?.toDate()).toUTCString()}</ChatTimesTamp>
+          </ChatMessage>
+        ))}
       </ChatBody>
 
       <ChatFooter>
